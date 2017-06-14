@@ -1,16 +1,30 @@
 {
   "name": "getpassword",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "getpass for nodejs",
   "main": "index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "node ./test/getpass.js",
+    "test": "node test/getpass.js",
     "install": "node-gyp rebuild"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ucev/get-password.git"
+  },
+  "keywords": [
+    "nodejs",
+    "getpass",
+    "password",
+    "pass"
+  ],
   "author": "ucev <zhangshuaiyf@icloud.com>",
   "license": "MIT",
-  "gypfile": true
+  "gypfile": true,
+  "bugs": {
+    "url": "https://github.com/ucev/get-password/issues"
+  },
+  "homepage": "https://github.com/ucev/get-password#readme"
 }
