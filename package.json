@@ -1,0 +1,16 @@
+{
+  "name": "getpassword",
+  "version": "0.0.0",
+  "description": "getpass for nodejs",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node ./test/getpass.js",
+    "install": "node-gyp rebuild"
+  },
+  "author": "ucev <zhangshuaiyf@icloud.com>",
+  "license": "MIT",
+  "gypfile": true
+}
