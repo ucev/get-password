@@ -2,6 +2,7 @@
   "name": "getpassword",
   "version": "0.0.2",
   "description": "getpass for nodejs",
+  "gypfile": true,
   "main": "index.js",
   "directories": {
     "test": "test"
