@@ -1,6 +1,6 @@
 {
   "name": "getpassword",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "getpass for nodejs",
   "gypfile": true,
   "main": "index.js",
@@ -23,7 +23,6 @@
   ],
   "author": "ucev <zhangshuaiyf@icloud.com>",
   "license": "MIT",
-  "gypfile": true,
   "bugs": {
     "url": "https://github.com/ucev/get-password/issues"
   },
