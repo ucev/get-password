@@ -42,31 +42,10 @@ namespace _getpass {
     return 0;
   }
 
-  string getPassword(string prompt) {
-    const int MAX_SIZE = 500;
-    int c;
-    set_disp_mode(STDIN_FILENO, 0);
-    vector<char> passwd;
-    // string 比较
-    if (prompt == "") {
-      prompt = "请输入密码";
-    }
-    cout << prompt << ": ";
-    c = cin.get();
-    while (c != '\n' && c != '\r' && passwd.size() < MAX_SIZE) {
-      passwd.push_back(c);
-      c = cin.get();
-    }
-    /**
-     * 这里会不会调用尚有疑问
-     * error: cannot use 'try' with exceptions disabled
-     */
-    set_disp_mode(STDIN_FILENO, 1);
-    return string(passwd.begin(), passwd.end());
-  }
-
   struct DelayBaton {
-    uv_work_t request;
+    uv_write_t write;
+    uv_tty_t tty_w;
+    uv_tty_t tty;
     Persistent<Function> callback;
     // not used
     int error;
@@ -74,22 +53,27 @@ namespace _getpass {
     string passwd;
   };
 
-  void DelayAsync(uv_work_t *req) {
-    DelayBaton *baton = static_cast<DelayBaton*>(req->data);
-    string prompt = baton->prompt;
-    string passwd = getPassword(prompt);
-    baton->passwd.assign(passwd);
+  void ReadAllocCallback(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buf) {
+    //
+    suggested_size = 500;
+    buf->base = (char*)malloc(suggested_size);
+    buf->len = suggested_size;
   }
 
-  void DelayAsyncAfter(uv_work_t *req, int status) {
+  void ReadReadCallback(uv_stream_t *stream, ssize_t nread, const uv_buf_t *buf) {
+    if (nread == 0) {
+      return;
+    }
     Isolate *isolate = Isolate::GetCurrent();
     HandleScope handleScope(isolate);
-    DelayBaton *baton = static_cast<DelayBaton*>(req->data);
+    uv_read_stop(stream);
+    DelayBaton *baton = static_cast<DelayBaton*>(stream->data);
     const int argc = 2;
     Local<Value> argv[] = {
       Undefined(isolate),
-      Local<Value>(String::NewFromUtf8(isolate, baton->passwd.c_str()))
+      Local<Value>(String::NewFromUtf8(isolate, buf->base))
     };
+    set_disp_mode(STDIN_FILENO, 1);
     Local<Function>::New(isolate, baton->callback)->Call(isolate->GetCurrentContext()->Global(), argc, argv);
     baton->callback.Reset();
     delete baton;
@@ -99,7 +83,7 @@ namespace _getpass {
     Isolate *isolate = args.GetIsolate();
     Local<Context> context = isolate->GetCurrentContext();
     DelayBaton *baton = new DelayBaton;
-    baton->request.data = (void*) baton;
+    uv_loop_t *loop = uv_default_loop();
     int cbIndex = 0;
     string prompt = "请输入密码";
     if (!args[0]->IsFunction()) {
@@ -119,11 +103,19 @@ namespace _getpass {
       delete baton;
       return;
     }
-    baton->prompt.assign(prompt, 0, prompt.length());
+    //baton->prompt.assign(prompt, 0, prompt.length());
     Local<Function> cb = Local<Function>::Cast(args[cbIndex]);
     baton->callback.Reset(isolate, cb);
     baton->error = 0;
-    uv_queue_work(uv_default_loop(), &baton->request, DelayAsync, DelayAsyncAfter);
+    set_disp_mode(STDIN_FILENO, 0);
+    uv_buf_t buf;
+    buf.base = (char*)prompt.c_str();
+    buf.len = strlen(buf.base);
+    uv_tty_init(loop, &baton->tty_w, 1, 0);
+    uv_write(&baton->write, (uv_stream_t*)&baton->tty_w, &buf, 1, NULL);
+    uv_tty_init(loop, &baton->tty, 0, 1);
+    baton->tty.data = baton;
+    uv_read_start((uv_stream_t*)&baton->tty, ReadAllocCallback, ReadReadCallback);
   }
 
   void init(Local<Object> exports) {
