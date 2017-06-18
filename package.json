@@ -8,7 +8,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "node test/getpass.js",
+    "test": "node ./test/getpass.js",
+    "build": "node-gyp rebuild",
     "install": "node-gyp rebuild"
   },
   "repository": {

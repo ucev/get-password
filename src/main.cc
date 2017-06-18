@@ -51,7 +51,7 @@ namespace _getpass {
     if (prompt == "") {
       prompt = "请输入密码";
     }
-    cout << prompt << ": " << endl;
+    cout << prompt << ": ";
     c = cin.get();
     while (c != '\n' && c != '\r' && passwd.size() < MAX_SIZE) {
       passwd.push_back(c);
