@@ -8,7 +8,6 @@
 #include <uv.h>
 
 #include <iostream>
-#include <vector>
 
 #define ECHOFLAGS (ECHO | ECHOE | ECHOK | ECHONL)
 #define ERROR1 "Cannot get the attribution of the terminal"
@@ -17,7 +16,6 @@
 namespace _getpass {
   using namespace v8;
   using namespace std;
-
 
   int set_disp_mode (int fd, int option) {
     int err;
@@ -63,6 +61,9 @@ namespace _getpass {
   void ReadReadCallback(uv_stream_t *stream, ssize_t nread, const uv_buf_t *buf) {
     if (nread == 0) {
       return;
+    }
+    if (buf->base[nread - 1] == '\n') {
+      buf->base[nread - 1] = '\0';
     }
     Isolate *isolate = Isolate::GetCurrent();
     HandleScope handleScope(isolate);

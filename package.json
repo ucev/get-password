@@ -7,6 +7,9 @@
   "directories": {
     "test": "test"
   },
+  "engines":{
+    "node": ">=6.11.0"
+  },
   "scripts": {
     "test": "node ./test/getpass.js",
     "build": "node-gyp rebuild",
