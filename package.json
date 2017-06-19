@@ -1,13 +1,13 @@
 {
   "name": "getpassword",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "getpass for nodejs",
   "gypfile": true,
   "main": "index.js",
   "directories": {
     "test": "test"
   },
-  "engines":{
+  "engines": {
     "node": ">=6.11.0"
   },
   "scripts": {
