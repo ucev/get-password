@@ -59,4 +59,4 @@ typings/
 
 .vscode
 .DS_Store
-build
+build/*
