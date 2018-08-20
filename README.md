@@ -12,7 +12,7 @@ const getpass = require('getpassword');
 
 ## Usage
 
-### `getpass.getPass([options, ]callback)`
+### `getpass.getpass([options, ]callback)`
 
 Gets a password from the terminal.
 
@@ -26,6 +26,6 @@ This function prints a prompt (by default `请输入密码:`) and then accepts i
    * `error`, either `null` (no error) or an `Error` instance
    * `password`, a String
 
-### `getpass.getPass([options])`
+### `getpass.getpass([options])`
 
 Gets a password from the terminal, return a `Promise`. If success, you can get your input-password from the `then` function.
